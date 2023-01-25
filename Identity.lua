@@ -75,6 +75,10 @@ end
 -----
 
 function Identity_SendChatMessage(msg, system, language, channel)
+
+	if(msg == "") then
+		return
+	end
     -- Check if Identity is enabled
     if (IdentitySettings.Enabled) then
         -- Check if the main Identity is configured
