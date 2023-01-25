@@ -301,7 +301,7 @@ function Identity_EnableChannels(channels, enable)
     end;
 
     -- Iterate over the list of channels
-    for channel in string.gmatch(channels, "%w+") do
+    for channel in string.gfind(channels, "%w+") do
         Identity_EnableChannel(channel, enable);
     end
 end
@@ -325,7 +325,7 @@ function Identity_EnableChannel(channel, enable)
     elseif (channel == "w" or channel == "whisper" or channel == "t" or channel == "tell") then
         channelName = "Whispers";
         IdentitySettings.Channels.Tell = enable;
-    elseif (string.match(channel, "%d+")) then
+    elseif (string.gfind(channel, "%d+")) then
         channelName = channel;
         local chanID = string.format("C%02d", channel + 0);
         IdentitySettings.Channels[chanID] = enable;
@@ -371,7 +371,7 @@ function Identity_SetFormat(options)
     end
 
     -- Check for the %s replacement token
-    if (string.match(options, "%%s")) then
+    if (string.gfind(options, "%%s")) then
         -- Escape any other percent sign, to avoid contaminating the format string
         options = string.gsub(options, "%%([^s])", "%%%%%1");
         DEFAULT_CHAT_FRAME:AddMessage("Changed format to '" .. options .. "'", 0.4, 0.4, 1.0);
