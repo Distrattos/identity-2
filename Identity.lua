@@ -79,10 +79,19 @@ function Identity_SendChatMessage(msg, system, language, channel)
 	if(msg == "") then
 		return
 	end
+
+	-- Check if msg should be ignored due to starting with .z, which is reserved Nyctermoon command
+	if (string.find(msg, "^%.z") ~= nil) then
+		-- Pass the message through unchanged
+		Identity_OriginalSendChatMessage(msg, system, language, channel);
+		return
+	end
+
     -- Check if Identity is enabled
     if (IdentitySettings.Enabled) then
         -- Check if the main Identity is configured
         if (IdentitySettings.MainName ~= "") then
+
             -- Get the current Identity
             local main = Identity_GenerateMainName();
 
@@ -103,6 +112,18 @@ function Identity_SendChatMessage(msg, system, language, channel)
 
             -- Whispers
             if (IdentitySettings.Channels.Tell and system == "WHISPER") then
+                
+                -- Loop through all reserved Nyctermoon whisper commands
+                -- If message starts with said command, send whisper without main prefix
+                local nycterwhisps = {"cast","deny","dispel","set formation","set debug","set follow","set pet","set blessing","set totem","set drink","set eat","set heal","set healooc","set offheal","set offdps","set default","list stats","list status","list auras","list spells","list talents","joke","dance","reset","cancel","joke"}
+                for _, name in pairs(nycterwhisps) do
+                    if (string.find(msg, "^"..name) ~= nil) then
+                        -- Pass the message through unchanged
+                        Identity_OriginalSendChatMessage(msg, system, language, channel);
+                        return
+                    end
+                end
+
                 Identity_OriginalSendChatMessage(newmsg, system, language, channel);
                 return;
             end
